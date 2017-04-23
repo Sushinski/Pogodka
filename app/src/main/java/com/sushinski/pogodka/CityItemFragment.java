@@ -74,6 +74,7 @@ public class CityItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
+
             recyclerView.setAdapter(new CityItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
             recyclerView.setOnClickListener(new View.OnClickListener() {
                 @Override

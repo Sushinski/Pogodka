@@ -5,19 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
 import com.sushinski.pogodka.DL.DBReaderContract.CityRecord;
 import com.sushinski.pogodka.models.CityModel;
-
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.R.attr.id;
 
 public class CityDbReader {
     private CityDbReader(){}
 
-    public static long createRecord(Context context, CityModel record){
+    public static long create(Context context, CityModel record){
         CityReaderDbHelper mDbHelper = new CityReaderDbHelper(context);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -32,7 +29,7 @@ public class CityDbReader {
                 values);
     }
 
-    public static List<CityModel> getCities(Context context){
+    public static CityModel read(Context context){
         CityReaderDbHelper mDbHelper = new CityReaderDbHelper(context);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String[] projection = {
@@ -41,7 +38,7 @@ public class CityDbReader {
                 CityRecord.COLUMN_CITY_SELECTED
         };
 
-// How you want the results sorted in the resulting Cursor
+        // How you want the results sorted in the resulting Cursor
         String sortOrder =
                 CityRecord.COLUMN_CITY_TITLE + " ASC";
 
@@ -54,42 +51,41 @@ public class CityDbReader {
                 null,                                     // don't filter by row groups
                 sortOrder                                 // The sort order
         );
-        List<CityModel> city_list = new ArrayList<>();
         c.moveToFirst();
         try {
-            while (!c.isAfterLast()) {
-                CityModel city = new CityModel();
-                city.mCityName = c.getString(c.getColumnIndexOrThrow(CityRecord.COLUMN_CITY_TITLE));
-                city.mCityCode = c.getString(c.getColumnIndexOrThrow(CityRecord.COLUMN_CITY_CODE));
-                city.mIsSelected = c.getString(c.getColumnIndexOrThrow(CityRecord.COLUMN_CITY_SELECTED));
-                city_list.add(city);
-            }
+            CityModel city = new CityModel();
+            city.mCityName = c.getString(c.getColumnIndexOrThrow(CityRecord.COLUMN_CITY_TITLE));
+            city.mCityCode = c.getString(c.getColumnIndexOrThrow(CityRecord.COLUMN_CITY_CODE));
+            city.mIsSelected = c.getString(c.getColumnIndexOrThrow(CityRecord.COLUMN_CITY_SELECTED));
+            return city;
         }catch(IllegalArgumentException e){
             Log.e("Pogodka", "Can`t find all columns for city table");
+        }finally {
+            c.close(); // todo: check using finally block
         }
-        c.close();
-        return city_list;
+        return null;
     }
 
-    public static void updateCities(Context context, List<CityModel> cities_list){
+    public static void update(Context context, CityModel city){
         CityReaderDbHelper mDbHelper = new CityReaderDbHelper(context);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         ContentValues values;
         String selection = CityRecord.COLUMN_CITY_TITLE + " LIKE ?";
 
+        values = new ContentValues();
+        values.put(CityRecord.COLUMN_CITY_CODE, city.mCityCode);
+        values.put(CityRecord.COLUMN_CITY_SELECTED, city.mIsSelected);
+        String selectionArgs[] = { city.mCityName };
+        db.update(
+                CityRecord.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+    }
 
-        for(CityModel sm : cities_list){
-            values = new ContentValues();
-            values.put(CityRecord.COLUMN_CITY_CODE, sm.mCityCode);
-            values.put(CityRecord.COLUMN_CITY_SELECTED, sm.mIsSelected);
-            String selectionArgs[] = { sm.mCityName };
-            db.update(
-                    CityRecord.TABLE_NAME,
-                    values,
-                    selection,
-                    selectionArgs);
-        }
+    public static void delete(Context context, List<CityModel> cities_list){
+
     }
 
 }
