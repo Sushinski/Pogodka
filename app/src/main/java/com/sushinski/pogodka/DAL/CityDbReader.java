@@ -29,7 +29,7 @@ public class CityDbReader {
                 values);
     }
 
-    public static CityModel read(Context context){
+    public static List<CityModel> read(Context context, String city_name){
         CityReaderDbHelper mDbHelper = new CityReaderDbHelper(context);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String[] projection = {
@@ -42,28 +42,38 @@ public class CityDbReader {
         String sortOrder =
                 CityRecord.COLUMN_CITY_TITLE + " ASC";
 
+        String column = null;
+        String[] city_sel = null;
+        if(city_name != null ) {
+            column = CityRecord.COLUMN_CITY_TITLE +" = ?";
+            city_sel = new String[]{city_name};
+        }
         Cursor c = db.query(
-                CityRecord.TABLE_NAME,  // The table to query
-                projection,                               // The columns to return
-                null,                                // The columns for the WHERE clause
-                null,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
-        );
-        c.moveToFirst();
+                    CityRecord.TABLE_NAME,  // The table to query
+                    projection,                               // The columns to return
+                    column,                                // The columns for the WHERE clause
+                    city_sel,                            // The values for the WHERE clause
+                    null,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    sortOrder                                 // The sort order
+            );
+        List<CityModel> res_list = new ArrayList<>();
         try {
-            CityModel city = new CityModel();
-            city.mCityName = c.getString(c.getColumnIndexOrThrow(CityRecord.COLUMN_CITY_TITLE));
-            city.mCityCode = c.getString(c.getColumnIndexOrThrow(CityRecord.COLUMN_CITY_CODE));
-            city.mIsSelected = c.getString(c.getColumnIndexOrThrow(CityRecord.COLUMN_CITY_SELECTED));
-            return city;
-        }catch(IllegalArgumentException e){
-            Log.e("Pogodka", "Can`t find all columns for city table");
+            c.moveToFirst();
+            while(!c.isAfterLast()){
+                CityModel city = new CityModel();
+                city.mCityName = c.getString(c.getColumnIndexOrThrow(CityRecord.COLUMN_CITY_TITLE));
+                city.mCityCode = c.getString(c.getColumnIndexOrThrow(CityRecord.COLUMN_CITY_CODE));
+                city.mIsSelected = c.getString(c.getColumnIndexOrThrow(CityRecord.COLUMN_CITY_SELECTED));
+                res_list.add(city);
+                c.moveToNext();
+            }
+        }catch(Exception e){
+            Log.e("Pogodka", "Can`t get city info");
         }finally {
             c.close(); // todo: check using finally block
         }
-        return null;
+        return res_list;
     }
 
     public static void update(Context context, CityModel city){

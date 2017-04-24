@@ -1,6 +1,7 @@
 package com.sushinski.pogodka.interfaces;
 
 import com.sushinski.pogodka.dummy.DummyContent;
+import com.sushinski.pogodka.models.CityModel;
 
 /**
  * This interface must be implemented by activities that contain this
@@ -14,5 +15,5 @@ import com.sushinski.pogodka.dummy.DummyContent;
  */
 public interface OnListFragmentInteractionListener {
     // TODO: Update argument type and name
-    void onListFragmentInteraction(DummyContent.DummyItem item);
+    void onListFragmentInteraction(CityModel item);
 }

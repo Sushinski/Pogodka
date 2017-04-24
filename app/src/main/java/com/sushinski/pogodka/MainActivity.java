@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.sushinski.pogodka.dummy.DummyContent;
 import com.sushinski.pogodka.interfaces.OnListFragmentInteractionListener;
+import com.sushinski.pogodka.models.CityModel;
 
 public class MainActivity extends AppCompatActivity
 implements OnListFragmentInteractionListener {
@@ -18,7 +19,7 @@ implements OnListFragmentInteractionListener {
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(CityModel item) {
         Intent detail = new Intent(this, DetailActivity.class);
         detail.putExtra(CITY_NAME, item.toString());
         startActivity(detail);

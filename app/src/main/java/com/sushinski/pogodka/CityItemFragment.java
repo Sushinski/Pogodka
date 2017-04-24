@@ -10,9 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.sushinski.pogodka.DAL.CityManager;
 import com.sushinski.pogodka.dummy.DummyContent;
 import com.sushinski.pogodka.dummy.DummyContent.DummyItem;
 import com.sushinski.pogodka.interfaces.OnListFragmentInteractionListener;
+import com.sushinski.pogodka.models.CityModel;
 
 import java.util.List;
 
@@ -29,6 +31,7 @@ public class CityItemFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private List<CityModel> mListItems;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -74,12 +77,13 @@ public class CityItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-
-            recyclerView.setAdapter(new CityItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            CityManager mngr = new CityManager(getContext());
+            mListItems = mngr.getCitiesList();
+            recyclerView.setAdapter(new CityItemRecyclerViewAdapter(mListItems, mListener));
             recyclerView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mListener.onListFragmentInteraction(DummyContent.ITEMS.get(view.getId()));
+                    mListener.onListFragmentInteraction(mListItems.get(view.getId()));
                 }
             });
         }

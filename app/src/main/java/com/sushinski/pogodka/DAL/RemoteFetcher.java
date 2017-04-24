@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import static com.sushinski.pogodka.DAL.CityResolver.getCityIdByName;
 
 public class RemoteFetcher {
     private static final String OPENWEATHER_API_URL =
@@ -15,8 +14,9 @@ public class RemoteFetcher {
 
     public static JSONObject getWeatherJSON(Context context, String city){
         try {
+            CityManager mngr = new CityManager(context);
             URL url = new URL(String.format(OPENWEATHER_API_URL,
-                    getCityIdByName(city),
+                    mngr.getCityIdByName(city),
                     PrefStorage.getPref(PrefStorage.OPENWEATHER_API_KEY_KEY),
                     "3"));
             HttpURLConnection connection =

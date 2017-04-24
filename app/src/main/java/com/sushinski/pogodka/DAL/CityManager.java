@@ -19,7 +19,7 @@ public class CityManager {
      * @return
      */
     public boolean isEmptyTable(){
-        return CityDbReader.read(mContext) != null;
+        return CityDbReader.read(mContext, null).isEmpty();
     }
 
     /**
@@ -29,14 +29,21 @@ public class CityManager {
     public void populateDatabase() {
         try {
             CityFileReader reader = new CityFileReader(mContext);
-            List<CityModel> cities = reader.renderJSON(
-                    reader.getJSONObject(CityFileReader.CITIES_CONF_DEFAULT_NAME)
-            );
+            List<CityModel> cities =
+                    reader.JSONtoModelList(CityFileReader.CITIES_CONF_DEFAULT_NAME);
             for (CityModel cm : cities) {
                 CityDbReader.create(mContext, cm);
             }
         }catch(IOException e){
             Log.e("CityManager", "Can`t populate cities table");
         }
+    }
+
+    public List<CityModel> getCitiesList(){
+        return CityDbReader.read(mContext, null);
+    }
+
+    public String getCityIdByName(String city_name) throws IndexOutOfBoundsException{
+        return CityDbReader.read(mContext, city_name).get(0).mCityCode;
     }
 }

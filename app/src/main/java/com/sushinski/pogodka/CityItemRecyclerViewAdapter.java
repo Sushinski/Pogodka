@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.sushinski.pogodka.dummy.DummyContent.DummyItem;
 import com.sushinski.pogodka.interfaces.OnListFragmentInteractionListener;
+import com.sushinski.pogodka.models.CityModel;
 
 import java.util.List;
 
@@ -17,10 +18,10 @@ import java.util.List;
  */
 public class CityItemRecyclerViewAdapter extends RecyclerView.Adapter<CityItemRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<CityModel> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public CityItemRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public CityItemRecyclerViewAdapter(List<CityModel> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -35,7 +36,7 @@ public class CityItemRecyclerViewAdapter extends RecyclerView.Adapter<CityItemRe
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).content);
+        holder.mIdView.setText(mValues.get(position).mCityName);
         //holder.mContentView.setText(mValues.get(position).content);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -59,13 +60,12 @@ public class CityItemRecyclerViewAdapter extends RecyclerView.Adapter<CityItemRe
         public final View mView;
         public final TextView mIdView;
         //public final TextView mContentView;
-        public DummyItem mItem;
+        public CityModel mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.textView);
-            //mContentView = (TextView) view.findViewById(R.id.content);
         }
 
         @Override
