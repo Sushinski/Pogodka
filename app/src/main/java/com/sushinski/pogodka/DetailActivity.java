@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Spinner;
+
 import com.sushinski.pogodka.interfaces.OnDetailInteractionListener;
 import static com.sushinski.pogodka.MainActivity.CITY_NAME;
 
@@ -24,6 +26,11 @@ public class DetailActivity extends AppCompatActivity implements OnDetailInterac
     }
 
     @Override
+    public void onSaveInstanceState(Bundle bundle){
+        super.onSaveInstanceState(bundle);
+    }
+
+    @Override
     public Bundle getFragmentParams(){
         Intent intent = getIntent();
         Bundle bnd = new Bundle();
@@ -32,4 +39,5 @@ public class DetailActivity extends AppCompatActivity implements OnDetailInterac
         }
         return bnd;
     }
+
 }

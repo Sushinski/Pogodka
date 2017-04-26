@@ -8,22 +8,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sushinski.pogodka.DAL.RemoteFetcher;
 import com.sushinski.pogodka.interfaces.OnDetailInteractionListener;
 import com.sushinski.pogodka.models.ForecastModel;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import static com.sushinski.pogodka.MainActivity.CITY_NAME;
 
 
@@ -35,13 +36,18 @@ import static com.sushinski.pogodka.MainActivity.CITY_NAME;
  * Use the {@link DetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DetailFragment extends Fragment {
+public class DetailFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+    public static final String[] mDaysArray =  new String[]{"3", "7"};
+    public static final String DAYS_COUNT_SEL = "com.sushinski.podvodka.DAYS_COUNT_SEL";
     private OnDetailInteractionListener mListener;
     private String mCityName;
-    private Handler handler;
+    private int mDaysCountSel;
     private TextView mMainText;
     private ListView mForecastList;
     private List<ForecastModel> mForecastListItems;
+    private Spinner mSpinner;
+    private ArrayAdapter mAdapter;
+
 
     public DetailFragment() {
         handler = new Handler();
@@ -65,9 +71,13 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
-        if( args != null &&
-                args.containsKey(CITY_NAME)) {
-            mCityName = args.getString(CITY_NAME);
+        if( args != null ){
+            if(args.containsKey(CITY_NAME)) {
+                mCityName = args.getString(CITY_NAME);
+            }
+        }
+        if (savedInstanceState != null) {
+            mDaysCountSel = savedInstanceState.getInt(DAYS_COUNT_SEL);
         }
         mForecastListItems = new ArrayList<>();
     }
@@ -79,8 +89,20 @@ public class DetailFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_detail, container, false);
         mMainText = (TextView) v.findViewById(R.id.mainText);
         mForecastList = (ListView) v.findViewById(R.id.forecast_list_view);
-        updateWeatherData(mCityName);
+        initSpinner(v);
+        setAdapter();
         return v;
+    }
+
+
+    public void initSpinner(View view){
+        mSpinner = (Spinner) view.findViewById(R.id.duration_spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_spinner_item, mDaysArray);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinner.setAdapter(adapter);
+        mSpinner.setSelection(mDaysCountSel);
+        mSpinner.setOnItemSelectedListener(this);
     }
 
     @Override
@@ -101,67 +123,43 @@ public class DetailFragment extends Fragment {
         mListener = null;
     }
 
-    private void updateWeatherData(final String city){
-        new Thread(){
-            public void run(){
-                final JSONObject json = RemoteFetcher.getWeatherJSON(getActivity(), city);
-                Runnable r;
-                if(json == null){
-                    r = new Runnable(){
-                        public void run(){
-                            Toast.makeText(getActivity(),
-                                    getActivity().getString(R.string.bad_request),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    };
-                } else {
-                    r = new Runnable(){
-                        public void run(){
-                            renderWeather(json);
-                        }
-                    };
-                }
-                handler.post(r);
-            }
-        }.start();
+
+
+    private void setAdapter(){
+        mAdapter =
+                new ArrayAdapter(getActivity(),
+                        android.R.layout.simple_list_item_2,
+                        android.R.id.text1,
+                        mForecastListItems){
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+                        TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+                        TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+                        ForecastModel fm = mForecastListItems.get(position);
+                        Long timet = Long.parseLong(fm.mDate);
+                        Date dt = new Date(timet*1000);
+                        SimpleDateFormat frmt = new SimpleDateFormat("dd MMMMMMMMM yyyy");
+                        text1.setText(frmt.format(dt) + " Температура: " + fm.mTemp + "\u00B0 C");
+                        text2.setText(fm.mSecondaryForecast);
+                        return view;
+                    }
+                };
+        mForecastList.setAdapter(mAdapter);
     }
 
-    private void renderWeather(JSONObject json){
-        try {
-            mMainText.setText(json.getJSONObject("city").getString("name").toUpperCase(Locale.US));
-            mForecastListItems.clear();
-            JSONArray objs = json.getJSONArray("list");
-            for(int i = 0; i < Integer.parseInt(json.getString("cnt")); ++i){
-                JSONObject obj = objs.getJSONObject(i);
-                if(obj != null){
-                    ForecastModel item = new ForecastModel();
-                    item.mDate = obj.getString("dt");
-                    item.mTemp = obj.getJSONObject("temp").getString("day");
-                    item.mSecondaryForecast = obj.getJSONArray("weather").
-                            getJSONObject(0).getString("description");
-                    mForecastListItems.add(item);
-                }
-            }
-            ArrayAdapter adapter =
-                    new ArrayAdapter(getActivity(),
-                            android.R.layout.simple_list_item_2,
-                            android.R.id.text1,
-                            mForecastListItems){
-                        @Override
-                        public View getView(int position, View convertView, ViewGroup parent) {
-                            View view = super.getView(position, convertView, parent);
-                            TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-                            TextView text2 = (TextView) view.findViewById(android.R.id.text2);
-                            ForecastModel fi = mForecastListItems.get(position);
-                            text1.setText(fi.mDate + " Температура: " + fi.mTemp);
-                            text2.setText(fi.mSecondaryForecast);
-                            return view;
-                        }
-                    };
-            mForecastList.setAdapter(adapter);
+    public void updateAdapter(){
+        mAdapter.notifyDataSetChanged();
+    }
 
-        }catch(Exception e){
-            Log.e("SimpleWeather", "One or more fields not found in the JSON data");
-        }
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        mDaysCountSel = i;
+        updateWeatherData();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 }
