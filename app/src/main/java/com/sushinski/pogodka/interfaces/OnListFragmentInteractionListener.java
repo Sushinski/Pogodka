@@ -1,7 +1,6 @@
 package com.sushinski.pogodka.interfaces;
 
-import com.sushinski.pogodka.dummy.DummyContent;
-import com.sushinski.pogodka.models.CityModel;
+import com.sushinski.pogodka.DL.models.CityModel;
 
 /**
  * This interface must be implemented by activities that contain this

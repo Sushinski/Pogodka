@@ -5,9 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import com.sushinski.pogodka.DL.DBReaderContract.CityRecord;
-import com.sushinski.pogodka.models.CityModel;
-import java.io.IOException;
+import com.sushinski.pogodka.DL.Contracts.DBReaderContract.CityRecord;
+import com.sushinski.pogodka.DL.models.CityModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +15,7 @@ public class CityDbReader {
     private CityDbReader(){}
 
     public static long create(Context context, CityModel record){
-        CityReaderDbHelper mDbHelper = new CityReaderDbHelper(context);
+        PogodkaDbHelper mDbHelper = new PogodkaDbHelper(context);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -30,7 +30,7 @@ public class CityDbReader {
     }
 
     public static List<CityModel> read(Context context, String city_name){
-        CityReaderDbHelper mDbHelper = new CityReaderDbHelper(context);
+        PogodkaDbHelper mDbHelper = new PogodkaDbHelper(context);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String[] projection = {
                 CityRecord.COLUMN_CITY_TITLE,
@@ -77,7 +77,7 @@ public class CityDbReader {
     }
 
     public static void update(Context context, CityModel city){
-        CityReaderDbHelper mDbHelper = new CityReaderDbHelper(context);
+        PogodkaDbHelper mDbHelper = new PogodkaDbHelper(context);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         ContentValues values;
@@ -95,7 +95,7 @@ public class CityDbReader {
     }
 
     public static void delete(Context context, List<CityModel> cities_list){
-
+        // todo:
     }
 
 }

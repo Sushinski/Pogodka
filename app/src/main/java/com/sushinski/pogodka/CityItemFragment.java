@@ -11,10 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sushinski.pogodka.DAL.CityManager;
-import com.sushinski.pogodka.dummy.DummyContent;
-import com.sushinski.pogodka.dummy.DummyContent.DummyItem;
 import com.sushinski.pogodka.interfaces.OnListFragmentInteractionListener;
-import com.sushinski.pogodka.models.CityModel;
+import com.sushinski.pogodka.DL.models.CityModel;
 
 import java.util.List;
 

@@ -13,18 +13,21 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.sushinski.pogodka.DAL.RemoteFetcher;
+import com.sushinski.pogodka.DAL.ForecastManager;
+import com.sushinski.pogodka.DL.POJO.ForecastFields;
 import com.sushinski.pogodka.interfaces.OnDetailInteractionListener;
-import com.sushinski.pogodka.models.ForecastModel;
-import org.json.JSONArray;
+import com.sushinski.pogodka.DL.models.ForecastModel;
+import com.sushinski.pogodka.interfaces.UpdateFinishListener;
+
+import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+
 import static com.sushinski.pogodka.MainActivity.CITY_NAME;
 
 
@@ -36,7 +39,8 @@ import static com.sushinski.pogodka.MainActivity.CITY_NAME;
  * Use the {@link DetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DetailFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class DetailFragment extends Fragment
+        implements AdapterView.OnItemSelectedListener, UpdateFinishListener {
     public static final String[] mDaysArray =  new String[]{"3", "7"};
     public static final String DAYS_COUNT_SEL = "com.sushinski.podvodka.DAYS_COUNT_SEL";
     private OnDetailInteractionListener mListener;
@@ -47,10 +51,11 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemSelect
     private List<ForecastModel> mForecastListItems;
     private Spinner mSpinner;
     private ArrayAdapter mAdapter;
+    private ForecastManager mMngr;
+
 
 
     public DetailFragment() {
-        handler = new Handler();
     }
 
     /**
@@ -70,12 +75,6 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemSelect
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
-        if( args != null ){
-            if(args.containsKey(CITY_NAME)) {
-                mCityName = args.getString(CITY_NAME);
-            }
-        }
         if (savedInstanceState != null) {
             mDaysCountSel = savedInstanceState.getInt(DAYS_COUNT_SEL);
         }
@@ -88,12 +87,13 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemSelect
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_detail, container, false);
         mMainText = (TextView) v.findViewById(R.id.mainText);
+        mMainText.setText(mCityName);
         mForecastList = (ListView) v.findViewById(R.id.forecast_list_view);
+        mMngr = new ForecastManager(getContext());
         initSpinner(v);
-        setAdapter();
+        //setAdapter();
         return v;
     }
-
 
     public void initSpinner(View view){
         mSpinner = (Spinner) view.findViewById(R.id.duration_spinner);
@@ -137,11 +137,12 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemSelect
                         TextView text1 = (TextView) view.findViewById(android.R.id.text1);
                         TextView text2 = (TextView) view.findViewById(android.R.id.text2);
                         ForecastModel fm = mForecastListItems.get(position);
-                        Long timet = Long.parseLong(fm.mDate);
-                        Date dt = new Date(timet*1000);
+                        Long time_sec = fm.mDate;
+                        Date dt = new Date(time_sec * 1000);
                         SimpleDateFormat frmt = new SimpleDateFormat("dd MMMMMMMMM yyyy");
-                        text1.setText(frmt.format(dt) + " Температура: " + fm.mTemp + "\u00B0 C");
-                        text2.setText(fm.mSecondaryForecast);
+                        ForecastFields fields = mMngr.parseForecastJson(fm.mForecast);
+                        text1.setText(frmt.format(dt) + " Температура: " + fields.day_temp + "\u00B0 C");
+                        text2.setText(fields.detailed_descr);
                         return view;
                     }
                 };
@@ -149,17 +150,26 @@ public class DetailFragment extends Fragment implements AdapterView.OnItemSelect
     }
 
     public void updateAdapter(){
-        mAdapter.notifyDataSetChanged();
+        mForecastListItems = mMngr.getActualForecast(mCityName, mDaysArray[mDaysCountSel]);
+        setAdapter();
+        //mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         mDaysCountSel = i;
-        updateWeatherData();
+        mMngr.updateWeatherData(mCityName, mDaysArray[mDaysCountSel], this);
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
+
+    @Override
+    public void updateFinish() {
+        updateAdapter();
+    }
+
+
 }

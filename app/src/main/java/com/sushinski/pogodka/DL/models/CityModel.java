@@ -1,4 +1,4 @@
-package com.sushinski.pogodka.models;
+package com.sushinski.pogodka.DL.models;
 
 public class CityModel {
     public String mCityName;

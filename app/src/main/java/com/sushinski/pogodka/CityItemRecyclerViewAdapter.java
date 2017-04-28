@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.sushinski.pogodka.dummy.DummyContent.DummyItem;
 import com.sushinski.pogodka.interfaces.OnListFragmentInteractionListener;
-import com.sushinski.pogodka.models.CityModel;
+import com.sushinski.pogodka.DL.models.CityModel;
 
 import java.util.List;
 

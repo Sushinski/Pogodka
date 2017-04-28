@@ -1,0 +1,165 @@
+[
+  {
+    "id": 470819,
+    "name": "Vvedenskoye",
+    "country": "RU",
+    "coord": {
+      "lon": 36.894444,
+      "lat": 55.695278
+    }
+  },
+  {
+    "id": 502018,
+    "name": "Reutov",
+    "country": "RU",
+    "coord": {
+      "lon": 37.861668,
+      "lat": 55.759445
+    }
+  },
+  {
+    "id": 538601,
+    "name": "Kurovskoye",
+    "country": "RU",
+    "coord": {
+      "lon": 38.910831,
+      "lat": 55.578335
+    }
+  },
+  {
+    "id": 820027,
+    "name": "Gorenosovo",
+    "country": "RU",
+    "coord": {
+      "lon": 37.250278,
+      "lat": 55.818054
+    }
+  },
+  {
+    "id": 560756,
+    "name": "Golitsyno",
+    "country": "RU",
+    "coord": {
+      "lon": 36.983334,
+      "lat": 55.612221
+    }
+  },
+  {
+    "id": 519690,
+    "name": "Novaya Gollandiya",
+    "country": "RU",
+    "coord": {
+      "lon": 30.290508,
+      "lat": 59.929432
+    }
+  },
+  {
+    "id": 536203,
+    "name": "Sankt-Peterburg",
+    "country": "RU",
+    "coord": {
+      "lon": 30.25,
+      "lat": 59.916668
+    }
+  },
+  {
+    "id": 524901,
+    "name": "Moscow",
+    "country": "RU",
+    "coord": {
+      "lon": 37.615555,
+      "lat": 55.75222
+    }
+  },
+  
+  {
+    "id": 531232,
+    "name": "Malaya Yablonovka",
+    "country": "RU",
+    "coord": {
+      "lon": 30.433332,
+      "lat": 59.933334
+    }
+  },
+  {
+    "id": 531483,
+    "name": "Malaya Okhta",
+    "country": "RU",
+    "coord": {
+      "lon": 30.4125,
+      "lat": 59.928333
+    }
+  },
+  {
+    "id": 630336,
+    "name": "Republic of Belarus",
+    "country": "BY",
+    "coord": {
+      "lon": 28,
+      "lat": 53
+    }
+  },
+  {
+    "id": 521561,
+    "name": "Nikol’skoye",
+    "country": "RU",
+    "coord": {
+      "lon": 36.716667,
+      "lat": 56.150002
+    }
+  },
+  {
+    "id": 537691,
+    "name": "Kuznetsovo",
+    "country": "RU",
+    "coord": {
+      "lon": 36.650002,
+      "lat": 56.133331
+    }
+  },
+  {
+    "id": 463666,
+    "name": "Zen’kino",
+    "country": "RU",
+    "coord": {
+      "lon": 36.771942,
+      "lat": 55.94389
+    }
+  },
+  {
+    "id": 485279,
+    "name": "Sychëvka",
+    "country": "RU",
+    "coord": {
+      "lon": 36.822498,
+      "lat": 55.914165
+    }
+  },
+  {
+    "id": 689552,
+    "name": "Vinogradnoye",
+    "country": "UA",
+    "coord": {
+      "lon": 34.099998,
+      "lat": 44.483334
+    }
+  },
+  {
+    "id": 6726099,
+    "name": "Vecheri",
+    "country": "RU",
+    "coord": {
+      "lon": 37.512775,
+      "lat": 54.844013
+    }
+  },
+  {
+    "id": 465825,
+    "name": "Zabor’ye",
+    "country": "RU",
+    "coord": {
+      "lon": 37.785278,
+      "lat": 55.384167
+    }
+  }
+]

@@ -3,8 +3,7 @@ package com.sushinski.pogodka.DAL;
 import android.content.Context;
 import android.util.Log;
 
-import com.sushinski.pogodka.R;
-import com.sushinski.pogodka.models.ForecastModel;
+import com.sushinski.pogodka.DL.models.ForecastModel;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -51,8 +50,6 @@ public class RemoteFetcher {
 
             JSONObject data = new JSONObject(json.toString());
 
-            // This value will be 404 if the request was not
-            // successful
             if(data.getInt("cod") != 200){
                 return null;
             }
@@ -66,20 +63,20 @@ public class RemoteFetcher {
     public static List<ForecastModel> renderWeather(JSONObject json){
         List<ForecastModel> res_list = new ArrayList<>();
         try {
+            Integer city_id = Integer.parseInt(json.getJSONObject("city").getString("id"));
             JSONArray objs = json.getJSONArray("list");
             for(int i = 0; i < Integer.parseInt(json.getString("cnt")); ++i){
                 JSONObject obj = objs.getJSONObject(i);
                 if(obj != null){
                     ForecastModel item = new ForecastModel();
-                    item.mDate = obj.getString("dt");
-                    item.mTemp = obj.getJSONObject("temp").getString("day");
-                    item.mSecondaryForecast = obj.getJSONArray("weather").
-                            getJSONObject(0).getString("description");
+                    item.mCityId = city_id;
+                    item.mDate = Long.parseLong(obj.getString("dt"));
+                    item.mForecast = obj.toString();
                     res_list.add(item);
                 }
             }
         }catch(Exception e){
-            Log.e("SimpleWeather", "One or more fields not found in the JSON data");
+            Log.e("Pogodka", "Error during rendering json forecast data");
         }
         return res_list;
     }

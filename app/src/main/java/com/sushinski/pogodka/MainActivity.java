@@ -4,9 +4,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.sushinski.pogodka.dummy.DummyContent;
 import com.sushinski.pogodka.interfaces.OnListFragmentInteractionListener;
-import com.sushinski.pogodka.models.CityModel;
+import com.sushinski.pogodka.DL.models.CityModel;
 
 public class MainActivity extends AppCompatActivity
 implements OnListFragmentInteractionListener {

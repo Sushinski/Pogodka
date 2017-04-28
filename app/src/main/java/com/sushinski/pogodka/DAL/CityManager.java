@@ -3,7 +3,7 @@ package com.sushinski.pogodka.DAL;
 import android.content.Context;
 import android.util.Log;
 
-import com.sushinski.pogodka.models.CityModel;
+import com.sushinski.pogodka.DL.models.CityModel;
 
 import java.io.IOException;
 import java.util.List;
