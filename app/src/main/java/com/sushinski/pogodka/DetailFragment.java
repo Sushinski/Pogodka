@@ -2,9 +2,7 @@ package com.sushinski.pogodka;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,19 +13,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.sushinski.pogodka.DAL.ForecastManager;
-import com.sushinski.pogodka.DL.POJO.ForecastFields;
+import com.sushinski.pogodka.DL.POJO.ForecastField;
 import com.sushinski.pogodka.interfaces.OnDetailInteractionListener;
 import com.sushinski.pogodka.DL.models.ForecastModel;
 import com.sushinski.pogodka.interfaces.UpdateFinishListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static com.sushinski.pogodka.DL.POJO.ForecastField.CELSIUM;
 import static com.sushinski.pogodka.MainActivity.CITY_NAME;
 
 
@@ -91,7 +88,7 @@ public class DetailFragment extends Fragment
         mForecastList = (ListView) v.findViewById(R.id.forecast_list_view);
         mMngr = new ForecastManager(getContext());
         initSpinner(v);
-        //setAdapter();
+        setAdapter();
         return v;
     }
 
@@ -140,8 +137,8 @@ public class DetailFragment extends Fragment
                         Long time_sec = fm.mDate;
                         Date dt = new Date(time_sec * 1000);
                         SimpleDateFormat frmt = new SimpleDateFormat("dd MMMMMMMMM yyyy");
-                        ForecastFields fields = mMngr.parseForecastJson(fm.mForecast);
-                        text1.setText(frmt.format(dt) + " Температура: " + fields.day_temp + "\u00B0 C");
+                        ForecastField fields = mMngr.parseForecastJson(fm.mForecast);
+                        text1.setText(frmt.format(dt) + " Температура: " + fields.day_temp + CELSIUM);
                         text2.setText(fields.detailed_descr);
                         return view;
                     }
@@ -150,15 +147,15 @@ public class DetailFragment extends Fragment
     }
 
     public void updateAdapter(){
-        mForecastListItems = mMngr.getActualForecast(mCityName, mDaysArray[mDaysCountSel]);
+        mForecastListItems = mMngr.getActualForecast(mCityName, mDaysArray[mDaysCountSel], null);
         setAdapter();
-        //mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         mDaysCountSel = i;
-        mMngr.updateWeatherData(mCityName, mDaysArray[mDaysCountSel], this);
+        mMngr.updateWeatherData(new ArrayList<>(Arrays.asList(mCityName)),
+                mDaysArray[mDaysCountSel], this);
     }
 
     @Override

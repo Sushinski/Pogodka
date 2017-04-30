@@ -2,7 +2,8 @@ package com.sushinski.pogodka.DAL;
 
 import android.content.Context;
 import android.util.Log;
-import com.sushinski.pogodka.DL.POJO.ForecastFields;
+import com.sushinski.pogodka.DL.POJO.ForecastField;
+import com.sushinski.pogodka.DL.models.CityModel;
 import com.sushinski.pogodka.interfaces.UpdateFinishListener;
 import com.sushinski.pogodka.DL.models.ForecastModel;
 
@@ -12,49 +13,55 @@ import org.json.JSONObject;
 import java.util.List;
 import android.os.Handler;
 
-public class ForecastManager {
-    private Context mContext;
-
+public class ForecastManager extends BaseManager {
     public ForecastManager(Context context){
-        mContext = context;
+        super(context);
     }
 
-    public void updateWeatherData(final String city_name,
+    public synchronized void updateWeatherData(final List<String> city_names,
                                                  final String days_count,
                                                  final UpdateFinishListener listener){
-        final Handler handler = new Handler();
-        new Thread(){
-            public void run(){
-                final List<ForecastModel> result;
-                final JSONObject json = RemoteFetcher.getWeatherJSON(mContext,
-                        city_name,
-                        days_count);
-                if(json != null){
-                    result = RemoteFetcher.renderWeather(json);
-                    for(ForecastModel m: result){
-                        ForecastDbReader.create(mContext, m);
+        if(isOnline()) {
+            final Handler handler = new Handler();
+            new Thread() {
+                public void run() {
+                    for(String city_name: city_names ) {
+                        Log.d("started:", city_name);
+                        final List<ForecastModel> result;
+                        final JSONObject json = RemoteFetcher.getWeatherJSON(mContext,
+                                city_name,
+                                days_count);
+                        if (json != null) {
+                            result = RemoteFetcher.renderWeather(json);
+                            ForecastDbReader.delete(mContext, city_name);
+                            for (ForecastModel m : result) {
+                                ForecastDbReader.create(mContext, m);
+                            }
+                        }
+                        Log.d("finished:", city_name);
                     }
-                }
-                if( listener != null){
-                    Runnable r = new Runnable(){
-                            public void run(){
+                    if (listener != null) {
+                        Runnable r = new Runnable() {
+                            public void run() {
                                 listener.updateFinish();
                             }
-                    };
-                    handler.post(r);
+                        };
+                        handler.post(r);
+                    }
                 }
-            }
-        }.start();
+            }.start();
+        }
     }
 
     public List<ForecastModel> getActualForecast(final String city_name,
-                                                 final String days_count){
-        return ForecastDbReader.read(mContext, city_name, days_count);
+                                                 final String days_count,
+                                                 final Long date_from){
+        return ForecastDbReader.read(mContext, city_name, days_count, date_from);
     }
 
-    public ForecastFields parseForecastJson(String json_repr){
-        ForecastFields fields = new ForecastFields();
+    public ForecastField parseForecastJson(String json_repr){
         try {
+            ForecastField fields = new ForecastField();
             JSONObject data = new JSONObject(json_repr);
             fields.day_in_ms = data.getLong("dt") * 1000;
             JSONObject temp = data.getJSONObject("temp");
@@ -73,11 +80,11 @@ public class ForecastManager {
             fields.wind_speed = data.getDouble("speed");
             fields.deg = data.getDouble("deg");
             fields.clouds = data.getDouble("clouds");
-            fields.rain = data.getDouble("rain");
+            return fields;
         }catch(JSONException e){
             Log.e("parseForecastJson", "unable to create json representation");
         }
-        return fields;
+        return null;
     }
 
 }

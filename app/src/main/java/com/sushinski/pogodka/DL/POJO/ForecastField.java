@@ -1,6 +1,7 @@
 package com.sushinski.pogodka.DL.POJO;
 
-public class ForecastFields {
+public class ForecastField {
+    public static final String CELSIUM = "\u00B0 C";
     public long day_in_ms;
     public double day_temp;
     public double min_temp;

@@ -29,7 +29,7 @@ public class CityDbReader {
                 values);
     }
 
-    public static List<CityModel> read(Context context, String city_name){
+    public static List<CityModel> read(Context context, String city_name, Boolean is_selected){
         PogodkaDbHelper mDbHelper = new PogodkaDbHelper(context);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String[] projection = {
@@ -42,17 +42,34 @@ public class CityDbReader {
         String sortOrder =
                 CityRecord.COLUMN_CITY_TITLE + " ASC";
 
-        String column = null;
-        String[] city_sel = null;
-        if(city_name != null ) {
+        String column = "";
+        ArrayList<String> city_sel  = new ArrayList<>();
+        if(city_name != null) {
             column = CityRecord.COLUMN_CITY_TITLE +" = ?";
-            city_sel = new String[]{city_name};
+            city_sel.add(city_name);
         }
+        if(is_selected != null){
+            if( !column.equals("") ){
+                column += " AND ";
+            }
+            column += CityRecord.COLUMN_CITY_SELECTED + " = ?";
+            String flag = "0";
+            if(is_selected){
+                flag = "1";
+            }
+            city_sel.add(flag);
+        }
+        String[] sel_args = null;
+        if(city_sel.size() != 0){
+            sel_args = new String[city_sel.size()];
+            city_sel.toArray(sel_args);
+        }
+
         Cursor c = db.query(
                     CityRecord.TABLE_NAME,  // The table to query
                     projection,                               // The columns to return
                     column,                                // The columns for the WHERE clause
-                    city_sel,                            // The values for the WHERE clause
+                    sel_args,                            // The values for the WHERE clause
                     null,                                     // don't group the rows
                     null,                                     // don't filter by row groups
                     sortOrder                                 // The sort order
@@ -84,8 +101,12 @@ public class CityDbReader {
         String selection = CityRecord.COLUMN_CITY_TITLE + " LIKE ?";
 
         values = new ContentValues();
-        values.put(CityRecord.COLUMN_CITY_CODE, city.mCityCode);
-        values.put(CityRecord.COLUMN_CITY_SELECTED, city.mIsSelected);
+        if(city.mCityCode != null){
+            values.put(CityRecord.COLUMN_CITY_CODE, city.mCityCode);
+        }
+        if(city.mIsSelected != null) {
+            values.put(CityRecord.COLUMN_CITY_SELECTED, city.mIsSelected);
+        }
         String selectionArgs[] = { city.mCityName };
         db.update(
                 CityRecord.TABLE_NAME,

@@ -9,15 +9,21 @@ public class PogodkaApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        CityManager mngr = new CityManager(getApplicationContext());
-        if(mngr.isEmptyTable()){
-            mngr.populateDatabase();
-        }
+        initDatabase();
     }
 
     @Override
     public void onTerminate() {
         super.onTerminate();
+    }
+
+    private void initDatabase(){
+        CityManager mngr = new CityManager(getApplicationContext());
+        if(mngr.isEmptyTable()){
+            mngr.populateDatabase();
+            mngr.setCitySelection(CityManager.SAINT_PETERBURG, true);
+            mngr.setCitySelection(CityManager.MOSCOW, true);
+        }
     }
 
 }

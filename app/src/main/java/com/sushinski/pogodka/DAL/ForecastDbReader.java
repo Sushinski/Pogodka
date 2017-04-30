@@ -36,7 +36,10 @@ public class ForecastDbReader {
         }
     }
 
-    public static List<ForecastModel> read(Context context, String city_name, String days_count){
+    public static List<ForecastModel> read(Context context,
+                                           String city_name,
+                                           String days_count,
+                                           Long date_from){
         PogodkaDbHelper mDbHelper = new PogodkaDbHelper(context);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String[] projection = {
@@ -48,20 +51,33 @@ public class ForecastDbReader {
         String sortOrder =
                 DBReaderContract.ForecastRecord._ID + " ASC";
 
-        String column = null;
-        String[] city_sel = null;
+        String column = "";
+        ArrayList<String> city_sel = new ArrayList<>();;
         if(city_name != null ) {
             column = DBReaderContract.ForecastRecord.COLUMN_CITY_ID + " = " +
                     " (SELECT " + DBReaderContract.CityRecord.COLUMN_CITY_CODE + 
                     " FROM " + DBReaderContract.CityRecord.TABLE_NAME + " WHERE " +
                     DBReaderContract.CityRecord.COLUMN_CITY_TITLE + " = ? )";
-            city_sel = new String[]{city_name};
+            city_sel.add(city_name);
         }
+        if(date_from != null){
+            if(!column.equals("")){
+                column += " AND ";
+            }
+            column += DBReaderContract.ForecastRecord.COLUMN_DATE + " >= ? ";
+            city_sel.add(date_from.toString());
+        }
+        String[] sel_args = null;
+        if(city_sel.size() != 0){
+            sel_args = new String[city_sel.size()];
+            city_sel.toArray(sel_args);
+        }
+
         Cursor c = db.query(
                 DBReaderContract.ForecastRecord.TABLE_NAME,  // The table to query
                 projection,                               // The columns to return
                 column,                                // The columns for the WHERE clause
-                city_sel,                            // The values for the WHERE clause
+                sel_args,                            // The values for the WHERE clause
                 null,                                     // don't group the rows
                 null,                                     // don't filter by row groups
                 sortOrder,                                 // The sort order
@@ -108,8 +124,16 @@ public class ForecastDbReader {
                 selectionArgs);
     }
 
-    public static void delete(Context context, List<ForecastModel> cities_list){
-        // todo:
+    public static void delete(Context context, String city_name){
+        PogodkaDbHelper mDbHelper = new PogodkaDbHelper(context);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        String where = DBReaderContract.ForecastRecord.COLUMN_CITY_ID +
+                " = " +
+                " (SELECT " + DBReaderContract.CityRecord.COLUMN_CITY_CODE +
+                " FROM " + DBReaderContract.CityRecord.TABLE_NAME + " WHERE " +
+                DBReaderContract.CityRecord.COLUMN_CITY_TITLE + " = ? )";
+        String[] where_params = new String[]{city_name};
+        db.delete(DBReaderContract.ForecastRecord.TABLE_NAME, where, where_params);
     }
 
 

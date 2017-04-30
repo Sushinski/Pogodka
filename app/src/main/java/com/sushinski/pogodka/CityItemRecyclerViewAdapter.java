@@ -5,11 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.sushinski.pogodka.DL.POJO.CitiesItemField;
+import com.sushinski.pogodka.DL.models.ForecastModel;
 import com.sushinski.pogodka.dummy.DummyContent.DummyItem;
 import com.sushinski.pogodka.interfaces.OnListFragmentInteractionListener;
-import com.sushinski.pogodka.DL.models.CityModel;
 
 import java.util.List;
+
+import static com.sushinski.pogodka.DL.POJO.ForecastField.CELSIUM;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
@@ -18,10 +22,11 @@ import java.util.List;
  */
 public class CityItemRecyclerViewAdapter extends RecyclerView.Adapter<CityItemRecyclerViewAdapter.ViewHolder> {
 
-    private final List<CityModel> mValues;
+    private final List<CitiesItemField> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public CityItemRecyclerViewAdapter(List<CityModel> items, OnListFragmentInteractionListener listener) {
+    public CityItemRecyclerViewAdapter(List<CitiesItemField> items,
+                                       OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -35,20 +40,18 @@ public class CityItemRecyclerViewAdapter extends RecyclerView.Adapter<CityItemRe
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).mCityName);
-        //holder.mContentView.setText(mValues.get(position).content);
-
+        CitiesItemField field = mValues.get(position);
+        holder.mItem = field;
+        holder.mIdView.setText(field.mCityName + " " + field.mForecastFields.day_temp + CELSIUM);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteraction(holder.mItem);
                 }
             }
         });
+
     }
 
     @Override
@@ -59,8 +62,8 @@ public class CityItemRecyclerViewAdapter extends RecyclerView.Adapter<CityItemRe
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
-        //public final TextView mContentView;
-        public CityModel mItem;
+        public CitiesItemField mItem;
+        public ForecastModel mForecastItem;
 
         public ViewHolder(View view) {
             super(view);

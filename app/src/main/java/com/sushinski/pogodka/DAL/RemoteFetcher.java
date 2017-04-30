@@ -70,7 +70,7 @@ public class RemoteFetcher {
                 if(obj != null){
                     ForecastModel item = new ForecastModel();
                     item.mCityId = city_id;
-                    item.mDate = Long.parseLong(obj.getString("dt"));
+                    item.mDate = Long.parseLong(obj.getString("dt")) * 1000;
                     item.mForecast = obj.toString();
                     res_list.add(item);
                 }

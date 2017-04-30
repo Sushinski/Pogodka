@@ -5,15 +5,15 @@
     android:orientation="horizontal">
 
     <Button
-        android:text="детали"
+        android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
         android:layout_margin="@dimen/text_margin"
-        android:id="@+id/button" />
+        android:src="@drawable/ic_info_black_24dp"/>
 
     <TextView
         android:layout_width="wrap_content"
