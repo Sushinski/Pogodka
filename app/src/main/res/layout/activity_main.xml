@@ -10,12 +10,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.sushinski.pogodka.MainActivity">
 
-    <fragment
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.sushinski.pogodka.CityItemFragment"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/fragment" />
+        android:layout_height="match_parent">
+    </LinearLayout>
+
 </RelativeLayout>

@@ -3,6 +3,7 @@ package com.sushinski.pogodka;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,6 +42,8 @@ public class CityItemFragment extends Fragment
     ForecastManager mF_Mngr;
 
     public CityItemFragment() {
+        mC_Mngr = new CityManager(getContext());
+        mF_Mngr = new ForecastManager(getContext());
     }
 
     @SuppressWarnings("unused")
@@ -51,15 +54,25 @@ public class CityItemFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mC_Mngr = new CityManager(getContext());
-        mF_Mngr = new ForecastManager(getContext());
-        List<CityModel> c_list = mC_Mngr.getCitiesList(true);
-        ArrayList<String> city_names = new ArrayList<>(c_list.size());
-        for(CityModel cm: c_list){
-            city_names.add(cm.mCityName);
+        updateFragmentContent(null);
+    }
+
+    public void updateFragmentContent(@Nullable CitiesItemField field){
+        ArrayList<String> city_names;
+        if(field == null) {
+            List<CityModel> c_list = mC_Mngr.getCitiesList(true);
+            city_names = new ArrayList<>(c_list.size());
+            for (CityModel cm : c_list) {
+                city_names.add(cm.mCityName);
+            }
+        }else{
+            city_names = new ArrayList<>(1);
+            city_names.add(field.mCityName);
         }
+        // todo: set wait icon until updating to finish
         mF_Mngr.updateWeatherData(city_names, "1", this);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,7 +93,6 @@ public class CityItemFragment extends Fragment
         }
         return view;
     }
-
 
     private void updateItemList(){
         List<CityModel> cm_list = mC_Mngr.getCitiesList(true);
