@@ -3,10 +3,8 @@ package com.sushinski.pogodka.DAL;
 import android.content.Context;
 import android.util.Log;
 import com.sushinski.pogodka.DL.POJO.ForecastField;
-import com.sushinski.pogodka.DL.models.CityModel;
 import com.sushinski.pogodka.interfaces.UpdateFinishListener;
 import com.sushinski.pogodka.DL.models.ForecastModel;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,17 +12,28 @@ import java.util.Calendar;
 import java.util.List;
 import android.os.Handler;
 
+/**
+ * Database Manager to forecast tables/fields
+ */
 public class ForecastManager extends BaseManager {
     public ForecastManager(Context context){
         super(context);
     }
 
+
+    /**
+     * Gets forecast json object from remote server api and saves its content to databse
+     * @param city_names name to get forecasts for
+     * @param days_count count of
+     * @param listener
+     */
     public synchronized void updateWeatherData(final List<String> city_names,
                                                  final String days_count,
                                                  final UpdateFinishListener listener){
         final Handler handler = new Handler();
         new Thread() {
             public void run() {
+                // get time at bein if the day, used for correct date requesting
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, 0);
                 calendar.set(Calendar.MINUTE, 0);
@@ -32,15 +41,20 @@ public class ForecastManager extends BaseManager {
                 calendar.set(Calendar.MILLISECOND, 0);
 
                 for(String city_name: city_names ) {
+                    // checks if desired forecast alredy presented in database
                     List<ForecastModel> result = ForecastManager.this.
                             getActualForecast(city_name, days_count,
                                     calendar.getTimeInMillis());
+                    // of not, or forecast days count less than desired
+                    // and device in online mode
                     if( result.size() < Integer.parseInt(days_count)  && isOnline()) {
                         result.clear();
+                        // get forecast from remote api
                         final JSONObject json = RemoteFetcher.getWeatherJSON(mContext,
                                 city_name,
                                 days_count);
                         if (json != null) {
+                            // render and save forecast
                             result = RemoteFetcher.renderWeather(json);
                             ForecastDbReader.delete(mContext, city_name);
                             for (ForecastModel m : result) {
@@ -51,6 +65,7 @@ public class ForecastManager extends BaseManager {
                     result.clear();
                 }
                 if (listener != null) {
+                    // acknoledges listener that request finishes
                     Runnable r = new Runnable() {
                         public void run() {
                             listener.updateFinish();
@@ -62,6 +77,13 @@ public class ForecastManager extends BaseManager {
         }.start();
     }
 
+    /**
+     * gets actual forecast saved in database
+     * @param city_name city name to get forecast for
+     * @param days_count days count as {@link String}
+     * @param date_from start date to get forecasts from
+     * @return
+     */
     public List<ForecastModel> getActualForecast(final String city_name,
                                                  final String days_count,
                                                  final Long date_from){
@@ -69,6 +91,11 @@ public class ForecastManager extends BaseManager {
     }
 
 
+    /**
+     * Parses json object fields as forecast params
+     * @param json_repr Json object as {@link String}
+     * @return
+     */
     public ForecastField parseForecastJson(String json_repr){
         try {
             ForecastField fields = new ForecastField();

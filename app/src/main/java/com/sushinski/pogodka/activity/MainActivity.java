@@ -11,6 +11,10 @@ import com.sushinski.pogodka.fragment.CityItemFragment;
 import com.sushinski.pogodka.R;
 import com.sushinski.pogodka.fragment.SelectCitiesFragment;
 
+
+/**
+ * Main activity holds list fragment with cities with current day short forecast
+ */
 public class MainActivity extends AppCompatActivity {
     private SelectCitiesFragment mSelectCitiesFargment;
     private boolean mMenuState;
@@ -21,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mMenuState = true;
+        // add cities forecast fragment initially
         if(findViewById(R.id.fragment_container) != null) {
             CityItemFragment mCitiesForecastFragment = new CityItemFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().
@@ -30,23 +35,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Inflates menu
-     * @param menu
-     * @return
-     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         MenuItem addCitiesItem = menu.findItem(R.id.edit_cities_list);
+        // adjust menu items visibility
         addCitiesItem.setVisible(mMenuState);
         return true;
     }
 
-    /** Process menu item selection
-     * @param item
-     * @return
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
@@ -54,17 +51,23 @@ public class MainActivity extends AppCompatActivity {
                 if(mSelectCitiesFargment == null){
                     mSelectCitiesFargment = new SelectCitiesFragment();
                 }
+                // replace cities forecast frag with select cities list fragment
                 replaceMainFragment(mSelectCitiesFargment);
-                toggleHomeButton(true);
+                // adjust menu items for it
+                toggleHomeAndMenu(true);
                 return true;
             case android.R.id.home:
                 onBackPressed();
-                toggleHomeButton(false);
+                toggleHomeAndMenu(false);
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Makes fragment exchange transaction with current visible fragment
+     * @param fragment fragment to show instead visible
+     */
     private void replaceMainFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().
                 beginTransaction();
@@ -74,8 +77,11 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    private void toggleHomeButton(boolean bToggle){
-        // Enable the Up button
+    /**
+     * Toggles home button and cities menu item
+     * @param bToggle state to be toggled
+     */
+    private void toggleHomeAndMenu(boolean bToggle){
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(bToggle);
@@ -83,5 +89,4 @@ public class MainActivity extends AppCompatActivity {
             invalidateOptionsMenu();
         }
     }
-
 }

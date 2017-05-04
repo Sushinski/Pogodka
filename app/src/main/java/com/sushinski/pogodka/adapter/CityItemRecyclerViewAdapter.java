@@ -18,11 +18,11 @@ import java.util.List;
 import static com.sushinski.pogodka.DL.POJO.ForecastField.CELSIUM;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
+ * recycler view adapter shows city with current temperature
+ *
  */
-public class CityItemRecyclerViewAdapter extends RecyclerView.Adapter<CityItemRecyclerViewAdapter.ViewHolder> {
+public class CityItemRecyclerViewAdapter extends
+        RecyclerView.Adapter<CityItemRecyclerViewAdapter.ViewHolder> {
 
     private final List<CitiesItemField> mValues;
     private final OnListFragmentInteractionListener mListener;
@@ -44,6 +44,7 @@ public class CityItemRecyclerViewAdapter extends RecyclerView.Adapter<CityItemRe
     public void onBindViewHolder(final ViewHolder holder, int position) {
         CitiesItemField field = mValues.get(position);
         holder.mItem = field;
+        // form item text : city name , temperature and celsium sign with detailed description
         holder.mIdView.setText(field.mCityName + ": " + field.mForecastFields.day_temp + CELSIUM +
         ", " + field.mForecastFields.detailed_descr);
         holder.mInfoButton.setOnClickListener(new View.OnClickListener() {
@@ -54,7 +55,6 @@ public class CityItemRecyclerViewAdapter extends RecyclerView.Adapter<CityItemRe
                 }
             }
         });
-
     }
 
     @Override
@@ -67,7 +67,6 @@ public class CityItemRecyclerViewAdapter extends RecyclerView.Adapter<CityItemRe
         final TextView mIdView;
         final ImageButton mInfoButton;
         CitiesItemField mItem;
-        public ForecastModel mForecastItem;
 
         ViewHolder(View view) {
             super(view);
@@ -78,7 +77,7 @@ public class CityItemRecyclerViewAdapter extends RecyclerView.Adapter<CityItemRe
 
         @Override
         public String toString() {
-            return super.toString() + " '";
+            return mIdView.getText().toString();
         }
     }
 }

@@ -8,6 +8,10 @@ import android.view.MenuItem;
 import com.sushinski.pogodka.R;
 import com.sushinski.pogodka.interfaces.OnDetailInteractionListener;
 
+
+/**
+ * Activity which holds detailed forecast fragment
+ */
 public class DetailActivity extends AppCompatActivity implements OnDetailInteractionListener{
 
     @Override

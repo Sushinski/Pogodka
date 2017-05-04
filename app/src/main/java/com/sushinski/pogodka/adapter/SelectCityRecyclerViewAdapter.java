@@ -13,7 +13,10 @@ import java.util.List;
 import static com.sushinski.pogodka.DL.models.CityModel.CHECKED;
 import static com.sushinski.pogodka.DL.models.CityModel.UNCHECKED;
 
-
+/**
+ * adapter used for display sities avalailable for forecast request
+ * with check boxes marked for selected sities
+ */
 public class SelectCityRecyclerViewAdapter
         extends RecyclerView.Adapter<SelectCityRecyclerViewAdapter.ViewHolder> {
     private final List<CityModel> mValues;
@@ -54,14 +57,13 @@ public class SelectCityRecyclerViewAdapter
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public CityModel mItem;
-        public final TextView mTextView;
-        public final CheckBox mCheckBox;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        final View mView;
+        CityModel mItem;
+        final TextView mTextView;
+        final CheckBox mCheckBox;
 
-
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
             mTextView = (TextView) view.findViewById(R.id.text_view);

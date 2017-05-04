@@ -4,6 +4,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+/**
+ * base class for database table managers
+ */
 abstract class BaseManager {
     final Context mContext;
 
@@ -11,6 +14,10 @@ abstract class BaseManager {
         mContext = context;
     }
 
+    /**
+     * Checks if device is in online mode
+     * @return true if online else false
+     */
     boolean isOnline() {
         ConnectivityManager connMgr =
                 (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);

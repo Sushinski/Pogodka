@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import com.sushinski.pogodka.R;
 
+/**
+ *  Splash screen class, showed on app startup
+ */
 public class SplashscreenActivity extends AppCompatActivity {
 
     @Override
@@ -18,14 +21,13 @@ public class SplashscreenActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
-
-
     }
 
     @Override
     protected void onResume(){
         TextView tw = (TextView) findViewById(R.id.app_title);
         final long changeTime = 1000L;
+        // delay launch second activity by 1s
         tw.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -36,6 +38,4 @@ public class SplashscreenActivity extends AppCompatActivity {
         }, changeTime);
         super.onResume();
     }
-
-
 }

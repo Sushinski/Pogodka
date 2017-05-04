@@ -4,35 +4,50 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import com.sushinski.pogodka.DL.Contracts.DBReaderContract.CityRecord;
 import com.sushinski.pogodka.DL.models.CityModel;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.sushinski.pogodka.DL.models.CityModel.CHECKED;
 import static com.sushinski.pogodka.DL.models.CityModel.UNCHECKED;
 
+/**
+ * Cities table class, implements CRUD metods
+ */
 class CityDbReader {
     private CityDbReader(){}
 
+    /**
+     * creates cities database table recors
+     * @param context Context object
+     * @param record Model object holds fields to create with
+     * @return id of created record
+     */
     public static long create(Context context, CityModel record){
         PogodkaDbHelper mDbHelper = new PogodkaDbHelper(context);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         ContentValues values = new ContentValues();
         values.put(CityRecord.COLUMN_CITY_TITLE, record.mCityName);
         values.put(CityRecord.COLUMN_CITY_CODE, record.mCityCode);
         values.put(CityRecord.COLUMN_CITY_SELECTED, UNCHECKED);
-
         return db.insert(
                 CityRecord.TABLE_NAME,
                 null,
                 values);
     }
 
-    public static List<CityModel> read(Context context, String city_name, Boolean is_selected){
+    /**
+     * Read cities table records
+     * @param context context
+     * @param city_name city name to get record for
+     * @param is_selected selected status
+     * @return list of city records objects
+     */
+    public static List<CityModel> read(Context context,
+                                       @Nullable String city_name,
+                                       @Nullable Boolean is_selected){
         PogodkaDbHelper mDbHelper = new PogodkaDbHelper(context);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String[] projection = {
@@ -41,7 +56,7 @@ class CityDbReader {
                 CityRecord.COLUMN_CITY_SELECTED
         };
 
-        // How you want the results sorted in the resulting Cursor
+        // sort by city name ascend
         String sortOrder =
                 CityRecord.COLUMN_CITY_TITLE + " ASC";
 
@@ -91,11 +106,16 @@ class CityDbReader {
         }catch(Exception e){
             Log.e("Pogodka", "Can`t get city info");
         }finally {
-            c.close(); // todo: check using finally block
+            c.close();
         }
         return res_list;
     }
 
+    /**
+     * Upadate city table record with given parameters
+     * @param context context
+     * @param city model object with parameters
+     */
     public static void update(Context context, CityModel city){
         PogodkaDbHelper mDbHelper = new PogodkaDbHelper(context);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -118,6 +138,11 @@ class CityDbReader {
                 selectionArgs);
     }
 
+    /**
+     * Deletes city records with given params
+     * @param context context
+     * @param cities_list list of city model objects to delete
+     */
     public static void delete(Context context, List<CityModel> cities_list){
         // todo: should we actually delete cities ?
     }

@@ -1,7 +1,10 @@
 package com.sushinski.pogodka.DL.POJO;
 
+/**
+ * class describes limited forecast field for exchanging purposes
+ */
 public class ForecastField {
-    public static final String CELSIUM = "\u00B0 C";
+    public static final String CELSIUM = "\u00B0 C"; // unicode celsium symbol
     public long day_in_ms;
     public double day_temp;
     public double min_temp;

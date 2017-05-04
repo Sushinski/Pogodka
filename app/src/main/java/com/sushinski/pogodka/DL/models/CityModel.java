@@ -1,5 +1,8 @@
 package com.sushinski.pogodka.DL.models;
 
+/**
+ * Class for city databse table row mapping
+ */
 public class CityModel {
     public static final String CHECKED = "1";
     public static final String UNCHECKED = "0";

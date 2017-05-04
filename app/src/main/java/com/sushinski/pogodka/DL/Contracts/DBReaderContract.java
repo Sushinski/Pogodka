@@ -2,6 +2,9 @@ package com.sushinski.pogodka.DL.Contracts;
 
 import android.provider.BaseColumns;
 
+/**
+ * Class describes database tables
+ */
 public final class DBReaderContract {
 
     private DBReaderContract(){}
