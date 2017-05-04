@@ -12,10 +12,6 @@ public class PogodkaApplication extends Application {
         initDatabase();
     }
 
-    @Override
-    public void onTerminate() {
-        super.onTerminate();
-    }
 
     private void initDatabase(){
         CityManager mngr = new CityManager(getApplicationContext());
@@ -25,5 +21,4 @@ public class PogodkaApplication extends Application {
             mngr.setCitySelection(CityManager.MOSCOW, true);
         }
     }
-
 }

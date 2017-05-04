@@ -6,6 +6,9 @@ import com.sushinski.pogodka.DL.models.CityModel;
 import java.io.IOException;
 import java.util.List;
 
+import static com.sushinski.pogodka.DL.models.CityModel.CHECKED;
+import static com.sushinski.pogodka.DL.models.CityModel.UNCHECKED;
+
 public class CityManager extends BaseManager {
     public static final String SAINT_PETERBURG = "Sankt-Peterburg";
     public static final String MOSCOW = "Moscow";
@@ -50,7 +53,7 @@ public class CityManager extends BaseManager {
     public void setCitySelection(final String city_name, boolean is_selected){
         CityModel city = new CityModel();
         city.mCityName = city_name;
-        city.mIsSelected = is_selected ? "1" : "0";
+        city.mIsSelected = is_selected ? CHECKED : UNCHECKED;
         CityDbReader.update(mContext, city);
     }
 }

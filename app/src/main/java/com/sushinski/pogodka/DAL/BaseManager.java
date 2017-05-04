@@ -4,14 +4,14 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-public abstract class BaseManager {
-    Context mContext;
+abstract class BaseManager {
+    final Context mContext;
 
-    public BaseManager(Context context){
+    BaseManager(Context context){
         mContext = context;
     }
 
-    public boolean isOnline() {
+    boolean isOnline() {
         ConnectivityManager connMgr =
                 (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();

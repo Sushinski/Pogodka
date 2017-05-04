@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">Pogodka</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="bad_request">Weather request error!</string>
     <string name="add_cities">Add cities</string>
+    <string name="empty_list">Unable to get actual forecasts</string>
+    <string name="info_button" translatable="false">info</string>
+    <string name="temperature">" Temperature: "</string>
+    <string name="days_in_forecast">Days in forecast: </string>
 </resources>

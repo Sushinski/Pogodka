@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.sushinski.pogodka.DL.Contracts.DBReaderContract;
 
-public class PogodkaDbHelper extends SQLiteOpenHelper {
+class PogodkaDbHelper extends SQLiteOpenHelper {
     private static final String TEXT_TYPE = " TEXT";
     private static final String INT_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";

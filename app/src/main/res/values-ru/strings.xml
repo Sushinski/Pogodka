@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Погодка</string>
+    <string name="add_cities">Добавить города</string>
+    <string name="bad_request">неправильный запрос</string>
+    <string name="empty_list">Не удалось получить актуальные прогнозы</string>
+    <string name="temperature">" Температура: "</string>
+    <string name="days_in_forecast">Дней в прогнозе: </string>
+</resources>

@@ -1,37 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="48dp"
     android:orientation="horizontal">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView"
-        android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:layout_marginStart="@dimen/text_margin"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/text_margin"
-        android:layout_marginTop="@dimen/text_margin"
-        android:layout_marginBottom="@dimen/text_margin"
+        android:layout_marginStart="@dimen/text_margin"
         android:layout_toLeftOf="@+id/button_info"
-        android:layout_toStartOf="@+id/button_info" />
+        android:layout_toStartOf="@+id/button_info"
+        android:textAppearance="?attr/textAppearanceListItem" />
 
-    <Button
+    <ImageButton
         android:id="@+id/button_info"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:contentDescription="@string/info_button"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_width="24dip"
+        android:layout_height="24dip"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginBottom="@dimen/text_margin"
-        android:layout_marginTop="@dimen/text_margin"
-        android:layout_marginRight="@dimen/text_margin"
-        android:layout_marginEnd="@dimen/text_margin"
-        android:src="@drawable/list_info_button"
         android:background="@drawable/list_info_button" />
 
 

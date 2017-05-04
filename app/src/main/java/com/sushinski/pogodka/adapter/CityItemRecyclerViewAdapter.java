@@ -1,13 +1,15 @@
-package com.sushinski.pogodka;
+package com.sushinski.pogodka.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.sushinski.pogodka.DL.POJO.CitiesItemField;
 import com.sushinski.pogodka.DL.models.ForecastModel;
+import com.sushinski.pogodka.R;
 import com.sushinski.pogodka.dummy.DummyContent.DummyItem;
 import com.sushinski.pogodka.interfaces.OnListFragmentInteractionListener;
 
@@ -42,8 +44,9 @@ public class CityItemRecyclerViewAdapter extends RecyclerView.Adapter<CityItemRe
     public void onBindViewHolder(final ViewHolder holder, int position) {
         CitiesItemField field = mValues.get(position);
         holder.mItem = field;
-        holder.mIdView.setText(field.mCityName + " " + field.mForecastFields.day_temp + CELSIUM);
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        holder.mIdView.setText(field.mCityName + ": " + field.mForecastFields.day_temp + CELSIUM +
+        ", " + field.mForecastFields.detailed_descr);
+        holder.mInfoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
@@ -59,16 +62,18 @@ public class CityItemRecyclerViewAdapter extends RecyclerView.Adapter<CityItemRe
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public CitiesItemField mItem;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        final View mView;
+        final TextView mIdView;
+        final ImageButton mInfoButton;
+        CitiesItemField mItem;
         public ForecastModel mForecastItem;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.textView);
+            mInfoButton = (ImageButton) view.findViewById(R.id.button_info);
         }
 
         @Override

@@ -14,7 +14,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RemoteFetcher {
+class RemoteFetcher {
     private  static final String OPENWEATHER_API_URL =
             "http://api.openweathermap.org/data/2.5/forecast/" +
                     "?id=%s&APPID=%s&units=metric&lang=ru ";
@@ -42,8 +42,8 @@ public class RemoteFetcher {
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(connection.getInputStream()));
 
-            StringBuffer json = new StringBuffer(1024);
-            String tmp="";
+            StringBuilder json = new StringBuilder(1024);
+            String tmp;
             while((tmp=reader.readLine())!=null)
                 json.append(tmp).append("\n");
             reader.close();

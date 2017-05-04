@@ -14,11 +14,13 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CityFileReader {
+import static com.sushinski.pogodka.DL.models.CityModel.UNCHECKED;
+
+class CityFileReader {
     public static final String CITIES_CONF_DEFAULT_NAME = "city.list.json";
     public static final String START_TAG = "{";
     public static final String END_TAG = "}";
-    private Context myContext;
+    private final Context myContext;
     public CityFileReader(Context context){
         myContext = context;
     }
@@ -28,7 +30,7 @@ public class CityFileReader {
             CityModel cm = new CityModel();
             cm.mCityName = obj.getString("name");
             cm.mCityCode = obj.getString("id");
-            cm.mIsSelected = "0";
+            cm.mIsSelected = UNCHECKED;
             return cm;
         }catch(Exception e) {
             Log.e("Error", "Can`t render cities json object");
@@ -36,13 +38,13 @@ public class CityFileReader {
         return null;
     }
 
-    public List<CityModel> JSONtoModelList(String json_filename) throws IOException {
+    List<CityModel> JSONtoModelList(String json_filename) throws IOException {
         try {
             InputStream istream = myContext.getAssets().open(json_filename);
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(istream));
             StringBuilder json = new StringBuilder(1024);
-            String tmp = "";
+            String tmp;
             int tags_count = 0;
             List<CityModel> res_list = new ArrayList<>();
             while ((tmp = reader.readLine()) != null){

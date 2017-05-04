@@ -10,6 +10,7 @@ import com.sushinski.pogodka.DL.models.ForecastModel;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.util.Calendar;
 import java.util.List;
 import android.os.Handler;
 
@@ -21,13 +22,21 @@ public class ForecastManager extends BaseManager {
     public synchronized void updateWeatherData(final List<String> city_names,
                                                  final String days_count,
                                                  final UpdateFinishListener listener){
-        if(isOnline()) {
-            final Handler handler = new Handler();
-            new Thread() {
-                public void run() {
-                    for(String city_name: city_names ) {
-                        Log.d("started:", city_name);
-                        final List<ForecastModel> result;
+        final Handler handler = new Handler();
+        new Thread() {
+            public void run() {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+
+                for(String city_name: city_names ) {
+                    List<ForecastModel> result = ForecastManager.this.
+                            getActualForecast(city_name, days_count,
+                                    calendar.getTimeInMillis());
+                    if( result.size() < Integer.parseInt(days_count)  && isOnline()) {
+                        result.clear();
                         final JSONObject json = RemoteFetcher.getWeatherJSON(mContext,
                                 city_name,
                                 days_count);
@@ -38,19 +47,19 @@ public class ForecastManager extends BaseManager {
                                 ForecastDbReader.create(mContext, m);
                             }
                         }
-                        Log.d("finished:", city_name);
                     }
-                    if (listener != null) {
-                        Runnable r = new Runnable() {
-                            public void run() {
-                                listener.updateFinish();
-                            }
-                        };
-                        handler.post(r);
-                    }
+                    result.clear();
                 }
-            }.start();
-        }
+                if (listener != null) {
+                    Runnable r = new Runnable() {
+                        public void run() {
+                            listener.updateFinish();
+                        }
+                    };
+                    handler.post(r);
+                }
+            }
+        }.start();
     }
 
     public List<ForecastModel> getActualForecast(final String city_name,
@@ -58,6 +67,7 @@ public class ForecastManager extends BaseManager {
                                                  final Long date_from){
         return ForecastDbReader.read(mContext, city_name, days_count, date_from);
     }
+
 
     public ForecastField parseForecastJson(String json_repr){
         try {

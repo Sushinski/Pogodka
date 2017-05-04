@@ -1,30 +1,28 @@
-package com.sushinski.pogodka;
+package com.sushinski.pogodka.activity;
 
-import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import com.sushinski.pogodka.fragment.CityItemFragment;
+import com.sushinski.pogodka.R;
+import com.sushinski.pogodka.fragment.SelectCitiesFragment;
 
-import com.sushinski.pogodka.DL.POJO.CitiesItemField;
-import com.sushinski.pogodka.interfaces.OnListFragmentInteractionListener;
-import com.sushinski.pogodka.DL.models.CityModel;
-
-public class MainActivity extends AppCompatActivity implements
-        SelectCitiesFragment.OnEditCitiesListEndListener {
-    private CityItemFragment mCitiesForecastFragment;
+public class MainActivity extends AppCompatActivity {
     private SelectCitiesFragment mSelectCitiesFargment;
-
+    private boolean mMenuState;
     public static final String CITY_NAME = "com.sushinski.podvodka.CITY_NAME";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mMenuState = true;
         if(findViewById(R.id.fragment_container) != null) {
-            mCitiesForecastFragment = new CityItemFragment();
+            CityItemFragment mCitiesForecastFragment = new CityItemFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().
                     beginTransaction();
             fragmentTransaction.add(R.id.fragment_container, mCitiesForecastFragment);
@@ -40,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        MenuItem addCitiesItem = menu.findItem(R.id.edit_cities_list);
+        addCitiesItem.setVisible(mMenuState);
         return true;
     }
 
@@ -55,6 +55,11 @@ public class MainActivity extends AppCompatActivity implements
                     mSelectCitiesFargment = new SelectCitiesFragment();
                 }
                 replaceMainFragment(mSelectCitiesFargment);
+                toggleHomeButton(true);
+                return true;
+            case android.R.id.home:
+                onBackPressed();
+                toggleHomeButton(false);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -69,15 +74,14 @@ public class MainActivity extends AppCompatActivity implements
         fragmentTransaction.commit();
     }
 
-    /**
-     * Callback method called after cities list edition ends
-     */
-    @Override
-    public void onEditCitiesListEnd(CitiesItemField field) {
-        // let`s return cities forecast list back
-        // update its content with new cities
-        mCitiesForecastFragment.updateFragmentContent(field);
-        // return it back to view
-        // replaceMainFragment(mCitiesForecastFragment);
+    private void toggleHomeButton(boolean bToggle){
+        // Enable the Up button
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(bToggle);
+            mMenuState = !bToggle;
+            invalidateOptionsMenu();
+        }
     }
+
 }

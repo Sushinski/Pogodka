@@ -11,7 +11,10 @@ import com.sushinski.pogodka.DL.models.CityModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CityDbReader {
+import static com.sushinski.pogodka.DL.models.CityModel.CHECKED;
+import static com.sushinski.pogodka.DL.models.CityModel.UNCHECKED;
+
+class CityDbReader {
     private CityDbReader(){}
 
     public static long create(Context context, CityModel record){
@@ -21,7 +24,7 @@ public class CityDbReader {
         ContentValues values = new ContentValues();
         values.put(CityRecord.COLUMN_CITY_TITLE, record.mCityName);
         values.put(CityRecord.COLUMN_CITY_CODE, record.mCityCode);
-        values.put(CityRecord.COLUMN_CITY_SELECTED, "0");
+        values.put(CityRecord.COLUMN_CITY_SELECTED, UNCHECKED);
 
         return db.insert(
                 CityRecord.TABLE_NAME,
@@ -53,9 +56,9 @@ public class CityDbReader {
                 column += " AND ";
             }
             column += CityRecord.COLUMN_CITY_SELECTED + " = ?";
-            String flag = "0";
+            String flag = UNCHECKED;
             if(is_selected){
-                flag = "1";
+                flag = CHECKED;
             }
             city_sel.add(flag);
         }
@@ -116,7 +119,7 @@ public class CityDbReader {
     }
 
     public static void delete(Context context, List<CityModel> cities_list){
-        // todo:
+        // todo: should we actually delete cities ?
     }
 
 }

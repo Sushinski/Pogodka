@@ -13,7 +13,7 @@ import com.sushinski.pogodka.DL.models.ForecastModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ForecastDbReader {
+class ForecastDbReader {
     private ForecastDbReader(){
 
     }
@@ -52,7 +52,7 @@ public class ForecastDbReader {
                 DBReaderContract.ForecastRecord._ID + " ASC";
 
         String column = "";
-        ArrayList<String> city_sel = new ArrayList<>();;
+        ArrayList<String> city_sel = new ArrayList<>();
         if(city_name != null ) {
             column = DBReaderContract.ForecastRecord.COLUMN_CITY_ID + " = " +
                     " (SELECT " + DBReaderContract.CityRecord.COLUMN_CITY_CODE + 
