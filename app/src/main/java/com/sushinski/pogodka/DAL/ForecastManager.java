@@ -1,3 +1,8 @@
+/*
+* Created by Golubev Pavel, 2017
+* No license applied
+*/
+
 package com.sushinski.pogodka.DAL;
 
 import android.content.Context;
@@ -24,8 +29,8 @@ public class ForecastManager extends BaseManager {
     /**
      * Gets forecast json object from remote server api and saves its content to databse
      * @param city_names name to get forecasts for
-     * @param days_count count of
-     * @param listener
+     * @param days_count count of days as {@link String}
+     * @param listener callback listener for calling after updating finishes
      */
     public synchronized void updateWeatherData(final List<String> city_names,
                                                  final String days_count,
@@ -82,7 +87,7 @@ public class ForecastManager extends BaseManager {
      * @param city_name city name to get forecast for
      * @param days_count days count as {@link String}
      * @param date_from start date to get forecasts from
-     * @return
+     * @return list of actual forecast objects
      */
     public List<ForecastModel> getActualForecast(final String city_name,
                                                  final String days_count,
@@ -94,7 +99,7 @@ public class ForecastManager extends BaseManager {
     /**
      * Parses json object fields as forecast params
      * @param json_repr Json object as {@link String}
-     * @return
+     * @return object of selected forecast fields
      */
     public ForecastField parseForecastJson(String json_repr){
         try {

@@ -1,3 +1,8 @@
+/*
+* Created by Golubev Pavel, 2017
+* No license applied
+*/
+
 package com.sushinski.pogodka.adapter;
 
 import android.support.v7.widget.RecyclerView;

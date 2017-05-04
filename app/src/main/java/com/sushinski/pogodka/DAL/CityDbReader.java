@@ -1,3 +1,8 @@
+/*
+* Created by Golubev Pavel, 2017
+* No license applied
+*/
+
 package com.sushinski.pogodka.DAL;
 
 import android.content.ContentValues;
@@ -93,21 +98,20 @@ class CityDbReader {
                     sortOrder                                 // The sort order
             );
         List<CityModel> res_list = new ArrayList<>();
-        try {
-            c.moveToFirst();
-            while(!c.isAfterLast()){
-                CityModel city = new CityModel();
+        c.moveToFirst();
+        while(!c.isAfterLast()) {
+            CityModel city = new CityModel();
+            try {
                 city.mCityName = c.getString(c.getColumnIndexOrThrow(CityRecord.COLUMN_CITY_TITLE));
                 city.mCityCode = c.getString(c.getColumnIndexOrThrow(CityRecord.COLUMN_CITY_CODE));
                 city.mIsSelected = c.getString(c.getColumnIndexOrThrow(CityRecord.COLUMN_CITY_SELECTED));
                 res_list.add(city);
-                c.moveToNext();
+            } catch (IllegalArgumentException e) {
+                // don`t add city to res list
             }
-        }catch(Exception e){
-            Log.e("Pogodka", "Can`t get city info");
-        }finally {
-            c.close();
+            c.moveToNext();
         }
+        c.close();
         return res_list;
     }
 

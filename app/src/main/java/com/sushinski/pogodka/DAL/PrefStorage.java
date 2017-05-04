@@ -1,3 +1,8 @@
+/*
+* Created by Golubev Pavel, 2017
+* No license applied
+*/
+
 package com.sushinski.pogodka.DAL;
 
 /**
@@ -9,8 +14,8 @@ class PrefStorage {
 
     /**
      * Gets key-value request result
-     * @param key
-     * @return
+     * @param key name of preference
+     * @return preference value
      */
     static String getPref(String key){
         String res = null; // todo: prefs based on database table

@@ -1,3 +1,8 @@
+/*
+* Created by Golubev Pavel, 2017
+* No license applied
+*/
+
 package com.sushinski.pogodka.DAL;
 
 import android.content.Context;
@@ -22,7 +27,7 @@ public class CityManager extends BaseManager {
 
     /**
      * Checks if city table is empty
-     * @return
+     * @return  true is table is empty, else false
      */
     public boolean isEmptyTable(){
         return CityDbReader.read(mContext, null, null).isEmpty();
@@ -48,7 +53,7 @@ public class CityManager extends BaseManager {
     /**
      * Gets cities with selected/diselected mark(or all, if null)
      * @param is_selected selected mark of records to get
-     * @return
+     * @return list of city objects
      */
     public List<CityModel> getCitiesList(@Nullable Boolean is_selected){
         return CityDbReader.read(mContext, null, is_selected);

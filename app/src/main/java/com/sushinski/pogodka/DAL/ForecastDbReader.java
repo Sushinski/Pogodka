@@ -1,15 +1,17 @@
-package com.sushinski.pogodka.DAL;
+/*
+* Created by Golubev Pavel, 2017
+* No license applied
+*/
 
+package com.sushinski.pogodka.DAL;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
 import com.sushinski.pogodka.DL.Contracts.DBReaderContract;
 import com.sushinski.pogodka.DL.models.ForecastModel;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,14 +28,10 @@ class ForecastDbReader {
         values.put(DBReaderContract.ForecastRecord.COLUMN_CITY_ID, record.mCityId);
         values.put(DBReaderContract.ForecastRecord.COLUMN_DATE, record.mDate);
         values.put(DBReaderContract.ForecastRecord.COLUMN_FORECAST_DATA, record.mForecast);
-        try {
-            return db.insert(
+        return db.insert(
                     DBReaderContract.ForecastRecord.TABLE_NAME,
                     null,
                     values);
-        }catch(Exception e){
-            return -1;
-        }
     }
 
     public static List<ForecastModel> read(Context context,
@@ -84,10 +82,11 @@ class ForecastDbReader {
                 days_count
         );
         List<ForecastModel> res_list = new ArrayList<>();
-        try {
-            c.moveToFirst();
-            while(!c.isAfterLast()){
-                ForecastModel model  = new ForecastModel();
+
+        c.moveToFirst();
+        while(!c.isAfterLast()){
+            ForecastModel model  = new ForecastModel();
+            try {
                 model.mCityId = c.getInt(c.getColumnIndexOrThrow(
                         DBReaderContract.ForecastRecord.COLUMN_CITY_ID));
                 model.mDate = c.getLong(c.getColumnIndexOrThrow(
@@ -95,13 +94,12 @@ class ForecastDbReader {
                 model.mForecast = c.getString(c.getColumnIndexOrThrow(
                         DBReaderContract.ForecastRecord.COLUMN_FORECAST_DATA));
                 res_list.add(model);
-                c.moveToNext();
+            }catch(Exception e){
+                // don`t add forecast to res list
             }
-        }catch(Exception e){
-            Log.e("Pogodka", "Can`t get forecast data");
-        }finally {
-            c.close(); // todo: check using finally block
+            c.moveToNext();
         }
+        c.close();
         return res_list;
     }
 

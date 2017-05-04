@@ -1,10 +1,13 @@
+/*
+* Created by Golubev Pavel, 2017
+* No license applied
+*/
+
 package com.sushinski.pogodka.DAL;
 
 import android.content.Context;
 import android.util.Log;
-
 import com.sushinski.pogodka.DL.models.ForecastModel;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.BufferedReader;
