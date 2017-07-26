@@ -5,7 +5,10 @@
 
 package com.sushinski.pogodka.fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,16 +17,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.sushinski.pogodka.DAL.CityManager;
 import com.sushinski.pogodka.DAL.ForecastManager;
 import com.sushinski.pogodka.DL.POJO.CitiesItemField;
+import com.sushinski.pogodka.DL.POJO.ForecastField;
 import com.sushinski.pogodka.DL.models.ForecastModel;
 import com.sushinski.pogodka.R;
 import com.sushinski.pogodka.activity.DetailActivity;
 import com.sushinski.pogodka.adapter.CityItemRecyclerViewAdapter;
+import com.sushinski.pogodka.interfaces.INetworkStateChangeListener;
 import com.sushinski.pogodka.interfaces.OnListFragmentInteractionListener;
 import com.sushinski.pogodka.DL.models.CityModel;
 import com.sushinski.pogodka.interfaces.UpdateFinishListener;
+import com.sushinski.pogodka.receivers.NetworkStateReceiver;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -32,14 +41,18 @@ import static com.sushinski.pogodka.activity.MainActivity.CITY_NAME;
 /**
  * Class describes primary forecast list fragment unit
  */
-public class CityItemFragment extends Fragment
-        implements UpdateFinishListener, OnListFragmentInteractionListener {
+public class CityItemFragment
+        extends Fragment
+        implements UpdateFinishListener,
+        OnListFragmentInteractionListener,
+        INetworkStateChangeListener{
     private List<CitiesItemField> mListItems;
     private CityItemRecyclerViewAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private TextView mEmptyMessage;
     CityManager mC_Mngr;
     ForecastManager mF_Mngr;
+    private BroadcastReceiver mStateReceiver;
 
     public CityItemFragment() {
     }
@@ -54,6 +67,7 @@ public class CityItemFragment extends Fragment
         super.onCreate(savedInstanceState);
         mC_Mngr = new CityManager(getContext());
         mF_Mngr = new ForecastManager(getContext());
+        mStateReceiver = new NetworkStateReceiver(this);
     }
 
     /**
@@ -109,19 +123,21 @@ public class CityItemFragment extends Fragment
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         mListItems.clear();
+        boolean bActual = true;
         for(CityModel cm: cm_list){
+            CitiesItemField field = new CitiesItemField();
+            field.mCityName = cm.mCityName;
             try{
                 // gets actual saved forecast from db
                 ForecastModel fm = mF_Mngr.getActualForecast(cm.mCityName,
                         "1", calendar.getTimeInMillis()).get(0);
-                CitiesItemField field = new CitiesItemField();
-                field.mCityName = cm.mCityName;
                 // parse forecast field
                 field.mForecastFields = mF_Mngr.parseForecastJson(fm.mForecast);
                 mListItems.add(field);
             }catch(IndexOutOfBoundsException e){
-                // just skip adding emtpy forecasts
+                // skip empty forecasts
             }
+
         }
         if(mListItems.size() > 0) {
             showEmptyView(false);
@@ -129,11 +145,17 @@ public class CityItemFragment extends Fragment
         }else{
             showEmptyView(true);
         }
+
+        if(mListItems.size() < cm_list.size()) {
+            // shows warn if not all cities updated
+            Toast.makeText(getContext(),
+                    getContext().getString(R.string.unable_to_get),Toast.LENGTH_LONG).show();
+        }
     }
 
     /**
-     * showa/hides empty view for empty/non-empty list
-     * @param bShow
+     * show/hides empty view for empty/non-empty list
+     * @param bShow State of displayed view
      */
     private void showEmptyView(boolean bShow){
         mRecyclerView.setVisibility(bShow ? View.GONE : View.VISIBLE);
@@ -157,5 +179,25 @@ public class CityItemFragment extends Fragment
         Intent detail = new Intent(getActivity(), DetailActivity.class);
         detail.putExtra(CITY_NAME, item.mCityName);
         startActivity(detail);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        // registers network state receiver
+        getContext().registerReceiver(mStateReceiver,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        // unregisters receiver
+        getContext().unregisterReceiver(mStateReceiver);
+    }
+
+    @Override
+    public void onNetworkStateChange() {
+        updateFragmentContent(null);
     }
 }

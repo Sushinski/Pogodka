@@ -6,4 +6,6 @@
     <string name="info_button" translatable="false">info</string>
     <string name="temperature">" Temperature: "</string>
     <string name="days_in_forecast">Days in forecast: </string>
+    <string name="empty_forecast">Forecast unavailable</string>
+    <string name="unable_to_get">Unable to get entire forecast</string>
 </resources>

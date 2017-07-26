@@ -30,7 +30,7 @@ public class CityManager extends BaseManager {
      * @return  true is table is empty, else false
      */
     public boolean isEmptyTable(){
-        return CityDbReader.read(mContext, null, null).isEmpty();
+        return CityDbReader.read(null, null).isEmpty();
     }
 
     /**
@@ -43,7 +43,7 @@ public class CityManager extends BaseManager {
             List<CityModel> cities =
                     reader.JSONtoModelList(CityFileReader.CITIES_CONF_DEFAULT_NAME);
             for (CityModel cm : cities) {
-                CityDbReader.create(mContext, cm);
+                CityDbReader.create(cm);
             }
         }catch(IOException e){
             Log.e("CityManager", "Can`t populate cities table");
@@ -56,7 +56,7 @@ public class CityManager extends BaseManager {
      * @return list of city objects
      */
     public List<CityModel> getCitiesList(@Nullable Boolean is_selected){
-        return CityDbReader.read(mContext, null, is_selected);
+        return CityDbReader.read(null, is_selected);
     }
 
     /**
@@ -65,8 +65,8 @@ public class CityManager extends BaseManager {
      * @return city id
      * @throws IndexOutOfBoundsException if city with given name not presented
      */
-    public String getCityIdByName(String city_name) throws IndexOutOfBoundsException{
-        return CityDbReader.read(mContext, city_name, null).get(0).mCityCode;
+    String getCityIdByName(String city_name) throws IndexOutOfBoundsException{
+        return CityDbReader.read(city_name, null).get(0).mCityCode;
     }
 
     /**
@@ -78,6 +78,6 @@ public class CityManager extends BaseManager {
         CityModel city = new CityModel();
         city.mCityName = city_name;
         city.mIsSelected = is_selected ? CHECKED : UNCHECKED;
-        CityDbReader.update(mContext, city);
+        CityDbReader.update(city);
     }
 }

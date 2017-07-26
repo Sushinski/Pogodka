@@ -6,4 +6,6 @@
     <string name="empty_list">Не удалось получить актуальные прогнозы</string>
     <string name="temperature">" Температура: "</string>
     <string name="days_in_forecast">Дней в прогнозе: </string>
+    <string name="empty_forecast">Прогноз недоступен</string>
+    <string name="unable_to_get">Невозможно получить весь прогноз</string>
 </resources>

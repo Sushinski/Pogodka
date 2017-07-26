@@ -61,9 +61,9 @@ public class ForecastManager extends BaseManager {
                         if (json != null) {
                             // render and save forecast
                             result = RemoteFetcher.renderWeather(json);
-                            ForecastDbReader.delete(mContext, city_name);
+                            ForecastDbReader.delete(city_name);
                             for (ForecastModel m : result) {
-                                ForecastDbReader.create(mContext, m);
+                                ForecastDbReader.create(m);
                             }
                         }
                     }
@@ -92,7 +92,7 @@ public class ForecastManager extends BaseManager {
     public List<ForecastModel> getActualForecast(final String city_name,
                                                  final String days_count,
                                                  final Long date_from){
-        return ForecastDbReader.read(mContext, city_name, days_count, date_from);
+        return ForecastDbReader.read(city_name, days_count, date_from);
     }
 
 

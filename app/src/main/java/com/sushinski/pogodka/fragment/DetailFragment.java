@@ -5,7 +5,12 @@
 
 package com.sushinski.pogodka.fragment;
 
+import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -17,13 +22,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sushinski.pogodka.DAL.ForecastManager;
 import com.sushinski.pogodka.DL.POJO.ForecastField;
 import com.sushinski.pogodka.R;
+import com.sushinski.pogodka.interfaces.INetworkStateChangeListener;
 import com.sushinski.pogodka.interfaces.OnDetailInteractionListener;
 import com.sushinski.pogodka.DL.models.ForecastModel;
 import com.sushinski.pogodka.interfaces.UpdateFinishListener;
+import com.sushinski.pogodka.receivers.NetworkStateReceiver;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,15 +39,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static com.sushinski.pogodka.DL.POJO.ForecastField.CELSIUM;
 import static com.sushinski.pogodka.activity.MainActivity.CITY_NAME;
 
 
 
-public class DetailFragment extends Fragment
-        implements AdapterView.OnItemSelectedListener, UpdateFinishListener {
-    public static final String[] mDaysArray =  new String[]{"3", "7"};
+public class DetailFragment
+        extends Fragment
+        implements INetworkStateChangeListener,
+        AdapterView.OnItemSelectedListener,
+        UpdateFinishListener {
+    public static final String[] mDaysArray =  new String[]{"3","5","7"};
     public static final String DAYS_COUNT_SEL = "com.sushinski.podvodka.DAYS_COUNT_SEL";
     private OnDetailInteractionListener mListener;
     private String mCityName;
@@ -47,11 +59,13 @@ public class DetailFragment extends Fragment
     private ListView mForecastList;
     private List<ForecastModel> mForecastListItems;
     private ForecastManager mMngr;
+    private BroadcastReceiver mStateReceiver;
 
 
     public DetailFragment() {
     }
 
+    @SuppressWarnings("unused")
     public static DetailFragment newInstance(String city_name) {
         DetailFragment fragment = new DetailFragment();
         Bundle args = new Bundle();
@@ -78,6 +92,7 @@ public class DetailFragment extends Fragment
         mMainText.setText(mCityName);
         mForecastList = (ListView) v.findViewById(R.id.forecast_list_view);
         mMngr = new ForecastManager(getContext());
+        mStateReceiver = new NetworkStateReceiver(this);
         initSpinner(v);
         setAdapter();
         return v;
@@ -112,8 +127,8 @@ public class DetailFragment extends Fragment
     }
 
 
-
     private void setAdapter(){
+        @SuppressWarnings("unchecked")
         ArrayAdapter mAdapter = new ArrayAdapter(getActivity(),
                 android.R.layout.simple_list_item_2,
                 android.R.id.text1,
@@ -128,7 +143,10 @@ public class DetailFragment extends Fragment
                 ForecastModel fm = mForecastListItems.get(position);
                 Long time_msec = fm.mDate;
                 Date dt = new Date(time_msec);
+
+                @SuppressLint("SimpleDateFormat")
                 SimpleDateFormat frmt = new SimpleDateFormat("dd MMMM yyyy");
+
                 ForecastField fields = mMngr.parseForecastJson(fm.mForecast);
                 String t = getResources().getString(R.string.temperature);
                 text1.setText(frmt.format(dt) + t + fields.day_temp + CELSIUM);
@@ -141,6 +159,11 @@ public class DetailFragment extends Fragment
 
     public void updateAdapter(){
         mForecastListItems = mMngr.getActualForecast(mCityName, mDaysArray[mDaysCountSel], null);
+        if(mForecastListItems.size() < Integer.parseInt(mDaysArray[mDaysCountSel])){
+            // shows warn if actual items less than desired
+            Toast.makeText(getContext(),
+                    getContext().getText(R.string.unable_to_get),Toast.LENGTH_LONG).show();
+        }
         setAdapter();
     }
 
@@ -160,5 +183,28 @@ public class DetailFragment extends Fragment
         updateAdapter();
     }
 
+    @Override
+    public void onStart(){
+        super.onStart();
+        // register network status receiver
+        getContext().registerReceiver(mStateReceiver,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
 
+    @Override
+    public void onStop(){
+        super.onStop();
+        // unregister receiver
+        getContext().unregisterReceiver(mStateReceiver);
+    }
+
+    /**
+     * network changes receiver callback implementation
+     */
+    @Override
+    public void onNetworkStateChange() {
+        // update forecasts from remote if going online
+        mMngr.updateWeatherData(new ArrayList<>(Collections.singletonList(mCityName)),
+                mDaysArray[mDaysCountSel], this);
+    }
 }

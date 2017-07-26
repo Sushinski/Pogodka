@@ -6,6 +6,8 @@
 package com.sushinski.pogodka;
 
 import android.app.Application;
+
+import com.activeandroid.ActiveAndroid;
 import com.sushinski.pogodka.DAL.CityManager;
 
 /**
@@ -17,6 +19,7 @@ public class PogodkaApplication extends Application {
     public void onCreate() {
         super.onCreate();
         // inits database
+        ActiveAndroid.initialize(this);
         initDatabase();
     }
 
@@ -31,5 +34,14 @@ public class PogodkaApplication extends Application {
             mngr.setCitySelection(CityManager.SAINT_PETERBURG, true);
             mngr.setCitySelection(CityManager.MOSCOW, true);
         }
+    }
+
+    /**
+     * Deactivates Activeandroid library
+     */
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        ActiveAndroid.dispose();
     }
 }
